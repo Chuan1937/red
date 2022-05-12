@@ -22,3 +22,13 @@ import statsmodels.api as sm
 fit = sm.formula.ols('Salary ~ YearsExperience', data = income).fit()
 # 返回模型的参数值
 print(fit.params)
+# 将数据集拆分为训练集和测试集
+#random_state为数据随机的方式
+train, test = model_selection.train_test_split(Profit, test_size = 0.2, random_state=1234)
+# 根据train数据集建模
+model = sm.formula.ols('Profit ~ RD_Spend + Administration + Marketing_Spend + C(State)', data = train).fit()
+print('模型的偏回归系数分别为：\n', model.params)
+# 删除test数据集中的Profit变量，用剩下的自变量进行预测
+test_X = test.drop(labels = 'Profit', axis = 1)
+pred = model.predict(exog = test_X)
+print('对比预测值和实际值的差异：\n',pd.DataFrame({'Prediction':pred,'Real':test.Profit}))
